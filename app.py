@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 def main():
     # Clean
-    docs, meta_data, ids = clean_data("media/research.pdf")
+    docs, ids = clean_data("media/research.pdf")
     logger.info("Data cleaning done...")
 
     # Updating the variable with global scope.

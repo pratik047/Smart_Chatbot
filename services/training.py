@@ -12,19 +12,14 @@ logger = logging.getLogger(__name__)
 def train_model(docs, ids):
     # Test the embedding model to ensure it's working
     embedding = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
-    # test_embeddings = embedding.embed_documents(
-    #     contents[:5]
-    # )  # Test embedding with first 5 documents
     logger.info("Embeddings generated successfully for sample documents.")
 
     # Create the vectorstore with embeddings
-    vectorstore = Chroma.from_documents(documents=docs, embedding=embedding, ids=ids)
+    store = Chroma.from_documents(documents=docs, embedding=embedding, ids=ids)
     logger.info("vector store done.")
 
     # Set up retriever with vector store
-    retriever = vectorstore.as_retriever(
-        search_type="similarity", search_kwargs={"k": 10}
-    )
+    retriever = store.as_retriever(search_type="similarity", search_kwargs={"k": 10})
 
     logger.info("retriever configuration done.")
 

@@ -13,7 +13,6 @@ def clean_data(filename: str):
 
     # Generate document texts, metadatas, and unique IDs
     content = [doc.page_content for doc in docs]  # Extract text from each document
-    meta_data = [doc.metadata for doc in docs]  # Extract metadata (if any)
     ids = [f"doc_{i}" for i in range(len(content))]  # Assign unique IDs
 
-    return (docs, meta_data, ids)
+    return (docs, ids)
