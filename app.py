@@ -3,12 +3,12 @@ import logging
 import streamlit as st
 from dotenv import load_dotenv
 
-from services import clean_data, invoke, train_model
+from services import LOGGER_KEY, clean_data, initialize_logger, invoke, train_model
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(LOGGER_KEY)
 
 
-def main():
+def main() -> int:
     # Clean
     docs, ids = clean_data("media/research.pdf")
     logger.info("Data cleaning done...")
@@ -20,20 +20,24 @@ def main():
 
     logger.info("Data cleaning successful.")
 
+    return len(docs)
+
 
 if __name__ == "__main__":
+    # Logger initialization.
+    initialize_logger()
+
+    logger.info("Application loaded")
     # Load environment variables
     load_dotenv()
 
     # initialize LLM with RAG
-    main()
+    chunk_size = main()
 
     # Streamlit application title
-    st.title(" RAG Application built on Gemini Model ")
+    st.title("Smart chatbot using RAG!")
 
-    st.write(f"Loaded {10} document chunks.")
-
-    st.write("Embeddings generated successfully for sample documents.")
+    st.info(f"Loaded {chunk_size} document chunks.")
 
     # Take user input through Streamlit chat input
     query = st.chat_input("Ask something: ")
@@ -44,5 +48,3 @@ if __name__ == "__main__":
         answer = invoke(query, llm, prompt, retriever)
         # Display the response
         st.write(answer)
-    else:
-        st.info("Please input a query.")

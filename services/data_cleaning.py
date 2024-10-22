@@ -1,11 +1,19 @@
+import logging
+
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import PyPDFLoader
+
+from .constants import LOGGER_KEY
+
+logger = logging.getLogger(LOGGER_KEY)
 
 
 def clean_data(filename: str):
     # Load and split PDF documents
     loader = PyPDFLoader(filename)
     data = loader.load()
+
+    logger.info(f"PDF {filename} loaded...")
 
     # Split the documents into smaller chunks
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000)

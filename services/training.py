@@ -6,7 +6,9 @@ from langchain_chroma import Chroma
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
 
-logger = logging.getLogger(__name__)
+from .constants import LOGGER_KEY
+
+logger = logging.getLogger(LOGGER_KEY)
 
 
 def train_model(docs, ids):
