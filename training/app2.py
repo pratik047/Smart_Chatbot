@@ -26,6 +26,10 @@ logger.info("SpaCy model loaded successfully.")
 # Streamlit application title
 st.title("RAG Application with Knowledge Graph")
 
+# Initialize session state for graph visibility
+if "show_graph" not in st.session_state:
+    st.session_state.show_graph = False
+
 # Load PDF and process documents
 file_path = "MC_ans.pdf"
 try:
@@ -57,7 +61,11 @@ try:
         for doc in docs:
             doc_nlp = nlp(doc.page_content)
             for ent in doc_nlp.ents:
-                graph.add_node(ent.text, label=ent.label_)
+                graph.add_node(
+                    ent.text,
+                    label=ent.label_,
+                    color="#1f78b4" if ent.label_ == "PERSON" else "#33a02c",
+                )
 
             for sent in doc_nlp.sents:
                 for token in sent:
@@ -69,6 +77,7 @@ try:
                                 subject[0].text,
                                 objects[0].text,
                                 relation=token.text,
+                                color="#ff7f00",
                             )
         return graph
 
@@ -77,19 +86,27 @@ try:
         net = Network(height="500px", width="100%", directed=True)
 
         for node, data in graph.nodes(data=True):
-            net.add_node(node, title=f"{node} ({data.get('label', 'Unknown')})")
+            net.add_node(
+                node,
+                title=f"{node} ({data.get('label', 'Unknown')})",
+                color=data.get("color", "#999999"),
+            )
 
         for src, dest, data in graph.edges(data=True):
             relation = data.get("relation", "")
-            net.add_edge(src, dest, title=relation)
+            net.add_edge(src, dest, title=relation, color=data.get("color", "#999999"))
 
         return net.generate_html("knowledge_graph.html")
 
-    # Build and display the knowledge graph
-    knowledge_graph = build_knowledge_graph(docs)
-    graph_html = render_knowledge_graph(knowledge_graph)
-    st.subheader("Knowledge Graph")
-    st.components.v1.html(graph_html, height=550)
+    # Single button to toggle Knowledge Graph display
+    if st.button("Knowledge Graph"):
+        st.session_state.show_graph = not st.session_state.show_graph
+
+    if st.session_state.show_graph:
+        knowledge_graph = build_knowledge_graph(docs)
+        graph_html = render_knowledge_graph(knowledge_graph)
+        st.subheader("Knowledge Graph")
+        st.components.v1.html(graph_html, height=550)
 
     # Handle user query
     query = st.chat_input("Ask something:")
