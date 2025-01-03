@@ -9,3 +9,8 @@ langchain_chroma
 langchainhub
 pypdf
 rapidocr-onnxruntime
+spacy
+networkx
+pyvis
+logging
+langchain_core
