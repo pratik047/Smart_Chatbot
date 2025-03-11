@@ -2,3 +2,4 @@
 .env_*
 *.pyc*
 *.log
+*/chroma*
